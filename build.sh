@@ -403,28 +403,6 @@ case "$COMMAND" in
     # Swift versioning
     ######################################
     "set-swift-version")
-        version="$2"
-        if [[ -z "$version" ]]; then
-            version="$REALM_SWIFT_VERSION"
-        fi
-
-        # Update the symlinks to point to the correct verion of the source, and
-        # then tell git to ignore the fact that we just changed a tracked file so
-        # that the new symlink doesn't accidentally get committed
-        rm -rf RealmSwift
-        ln -s "RealmSwift-swift$version" RealmSwift
-        git update-index --assume-unchanged RealmSwift || true
-
-        SWIFT_VERSION_FILE="RealmSwift/SwiftVersion.swift"
-        CONTENTS="let swiftLanguageVersion = \"$version\""
-        if [ ! -f "$SWIFT_VERSION_FILE" ] || ! grep -q "$CONTENTS" "$SWIFT_VERSION_FILE"; then
-            echo "$CONTENTS" > "$SWIFT_VERSION_FILE"
-        fi
-
-        cd Realm/Tests
-        rm -rf Swift
-        ln -s "Swift$version" Swift
-        git update-index --assume-unchanged Swift || true
         exit 0
         ;;
 
@@ -858,13 +836,7 @@ case "$COMMAND" in
         if [[ "$2" != "swift" ]]; then
             sh build.sh download-core
             mv core/librealm.a core/librealm-osx.a
-            if [[ "$REALM_SWIFT_VERSION" = "1.2" ]]; then
-                echo 'Installing for Xcode 6.'
-                mv core/librealm-ios-no-bitcode.a core/librealm-ios.a
-              else
-                echo 'Installing for Xcode 7+.'
-                mv core/librealm-ios-bitcode.a core/librealm-ios.a
-            fi
+            mv core/librealm-ios-bitcode.a core/librealm-ios.a
         fi
 
         # CocoaPods won't automatically preserve files referenced via symlinks
