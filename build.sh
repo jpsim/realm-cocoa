@@ -27,6 +27,7 @@ Usage: sh $0 command [argument]
 
 command:
   download-core:        downloads core library (binary version)
+  get-version:          get the current version
   cocoapods-setup:      download realm-core and create a stub RLMPlatform.h file to enable building via CocoaPods
 
 
@@ -121,6 +122,15 @@ case "$COMMAND" in
         else
             echo "The core library seems to be up to date."
         fi
+        exit 0
+        ;;
+
+    ######################################
+    # Versioning
+    ######################################
+    "get-version")
+        version_file="Realm/Realm-Info.plist"
+        echo "$(PlistBuddy -c "Print :CFBundleVersion" "$version_file")"
         exit 0
         ;;
 
