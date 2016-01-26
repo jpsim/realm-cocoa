@@ -87,6 +87,7 @@ case "$1" in
           if [[ -L "$symlink" ]]; then
             link="$(dirname "$symlink")/$(readlink "$symlink")"
             rm "$symlink"
+            echo "cp -RH $link $symlink"
             cp -RH "$link" "$symlink"
           fi
         done
@@ -97,7 +98,7 @@ case "$1" in
         # Create uppercase `Realm` header directory for a case-sensitive filesystem.
         # Both `Realm` and `realm` directories are required.
         if [ ! -e core/include/Realm ]; then
-        cp -R core/include/realm core/include/Realm
+            cp -R core/include/realm core/include/Realm
         fi
         cp -R core/include include
         mkdir -p include/Realm
@@ -107,7 +108,7 @@ case "$1" in
         cp Realm/ObjectStore/impl/apple/*.hpp include/Realm
         # Create lowercase `realm` header directory for a case-sensitive filesystem.
         if [ ! -e include/realm ]; then
-        cp -R include/Realm include/realm
+            cp -R include/Realm include/realm
         fi
         touch include/Realm/RLMPlatform.h
         ;;
