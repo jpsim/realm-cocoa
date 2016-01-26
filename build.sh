@@ -1,59 +1,11 @@
 #!/bin/sh
 
-##################################################################################
-# Custom build tool for Realm Objective-C binding.
-#
-# (C) Copyright 2011-2015 by realm.io.
-##################################################################################
-
-# Warning: pipefail is not a POSIX compatible option, but on OS X it works just fine.
-#          OS X uses a POSIX complain version of bash as /bin/sh, but apparently it does
-#          not strip away this feature. Also, this will fail if somebody forces the script
-#          to be run with zsh.
 set -o pipefail
 set -e
 
-# You can override the version of the core library
-: ${REALM_CORE_VERSION:=0.95.5} # set to "current" to always use the current build
-
-# You can override the xcmode used
-: ${XCMODE:=xcodebuild} # must be one of: xcodebuild (default), xcpretty, xctool
+: ${REALM_CORE_VERSION:=0.95.5}
 
 PATH=/usr/libexec:$PATH
-
-usage() {
-cat <<EOF
-Usage: sh $0 command [argument]
-
-command:
-  download-core:        downloads core library (binary version)
-  get-version:          get the current version
-  cocoapods-setup:      download realm-core and create a stub RLMPlatform.h file to enable building via CocoaPods
-
-
-argument:
-  version: version in the x.y.z format
-
-environment variables:
-  XCMODE: xcodebuild (default), xcpretty or xctool
-  CONFIGURATION: Debug or Release (default)
-  REALM_CORE_VERSION: version in x.y.z format or "current" to use local build
-  REALM_EXTRA_BUILD_ARGUMENTS: additional arguments to pass to the build tool
-EOF
-}
-
-######################################
-# Input Validation
-######################################
-
-if [ "$#" -eq 0 -o "$#" -gt 3 ]; then
-    usage
-    exit 1
-fi
-
-######################################
-# Variables
-######################################
 
 download_core() {
     echo "Downloading dependency: core ${REALM_CORE_VERSION}"
@@ -79,19 +31,7 @@ download_core() {
     ln -s core-${REALM_CORE_VERSION} core
 }
 
-COMMAND="$1"
-
-# Use Debug config if command ends with -debug, otherwise default to Release
-case "$COMMAND" in
-    *-debug)
-        COMMAND="${COMMAND%-debug}"
-        CONFIGURATION="Debug"
-        ;;
-    *) CONFIGURATION=${CONFIGURATION:-Release}
-esac
-export CONFIGURATION
-
-case "$COMMAND" in
+case "$1" in
 
     ######################################
     # Core
@@ -170,11 +110,5 @@ case "$COMMAND" in
         cp -R include/Realm include/realm
         fi
         touch include/Realm/RLMPlatform.h
-        ;;
-
-    *)
-        echo "Unknown command '$COMMAND'"
-        usage
-        exit 1
         ;;
 esac
