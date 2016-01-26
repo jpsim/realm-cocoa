@@ -27,8 +27,7 @@ download_core() {
     )
 
     rm -rf core-${REALM_CORE_VERSION} core
-    mv ${TMP_DIR}/core-${REALM_CORE_VERSION} .
-    ln -s core-${REALM_CORE_VERSION} core
+    mv ${TMP_DIR}/core-${REALM_CORE_VERSION} core
 }
 
 case "$1" in
@@ -81,16 +80,6 @@ case "$1" in
         sh build.sh download-core
         mv core/librealm.a core/librealm-osx.a
         mv core/librealm-ios-bitcode.a core/librealm-ios.a
-
-        # CocoaPods won't automatically preserve files referenced via symlinks
-        for symlink in $(find . -not -path "./.git/*" -type l); do
-          if [[ -L "$symlink" ]]; then
-            link="$(dirname "$symlink")/$(readlink "$symlink")"
-            rm "$symlink"
-            echo "cp -RH $link $symlink"
-            cp -RH "$link" "$symlink"
-          fi
-        done
 
         # CocoaPods doesn't support multiple header_mappings_dir, so combine
         # both sets of headers into a single directory
