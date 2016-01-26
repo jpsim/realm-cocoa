@@ -33,38 +33,6 @@ download_core() {
 case "$1" in
 
     ######################################
-    # Core
-    ######################################
-    "download-core")
-        if [ "$REALM_CORE_VERSION" = "current" ]; then
-            echo "Using version of core already in core/ directory"
-            exit 0
-        fi
-        if [ -d core -a -d ../realm-core -a ! -L core ]; then
-          # Allow newer versions than expected for local builds as testing
-          # with unreleased versions is one of the reasons to use a local build
-          if ! $(grep -i "${REALM_CORE_VERSION} Release notes" core/release_notes.txt >/dev/null); then
-              echo "Local build of core is out of date."
-              exit 1
-          else
-              echo "The core library seems to be up to date."
-          fi
-        elif ! [ -L core ]; then
-            echo "core is not a symlink. Deleting..."
-            rm -rf core
-            download_core
-        # With a prebuilt version we only want to check the first non-empty
-        # line so that checking out an older commit will download the
-        # appropriate version of core if the already-present version is too new
-        elif ! $(grep -m 1 . core/release_notes.txt | grep -i "${REALM_CORE_VERSION} RELEASE NOTES" >/dev/null); then
-            download_core
-        else
-            echo "The core library seems to be up to date."
-        fi
-        exit 0
-        ;;
-
-    ######################################
     # Versioning
     ######################################
     "get-version")
@@ -77,7 +45,7 @@ case "$1" in
     # CocoaPods
     ######################################
     "cocoapods-setup")
-        sh build.sh download-core
+        download_core
         mv core/librealm.a core/librealm-osx.a
         mv core/librealm-ios-bitcode.a core/librealm-ios.a
 
