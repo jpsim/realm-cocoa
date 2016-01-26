@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                    = 'Realm'
-  s.version                 = `sh build.sh get-version`
+  s.version                 = '0.97.0'
   s.summary                 = 'Realm is a modern data framework & database for iOS & OS X.'
   s.description             = <<-DESC
                               The Realm database, for Objective-C. (If you want to use Realm from Swift, see the “RealmSwift” pod.)
@@ -38,7 +38,7 @@ Pod::Spec.new do |s|
 
   s.module_map              = 'Realm/module.modulemap'
   s.compiler_flags          = "-DREALM_HAVE_CONFIG -DREALM_COCOA_VERSION='@\"#{s.version}\"' -D__ASSERTMACROS__"
-  s.prepare_command         = 'sh build.sh cocoapods-setup'
+  s.prepare_command         = 'sh build.sh'
   s.source_files            = 'Realm/*.{m,mm}',
                               'Realm/ObjectStore/*.cpp',
                               'Realm/ObjectStore/impl/*.cpp',

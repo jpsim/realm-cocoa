@@ -5,8 +5,6 @@ set -e
 
 : ${REALM_CORE_VERSION:=0.95.5}
 
-PATH=/usr/libexec:$PATH
-
 download_core() {
     echo "Downloading dependency: core ${REALM_CORE_VERSION}"
     TMP_DIR="$TMPDIR/core_bin"
@@ -30,34 +28,17 @@ download_core() {
     mv ${TMP_DIR}/core-${REALM_CORE_VERSION} core
 }
 
-case "$1" in
+download_core
+mv core/librealm.a core/librealm-osx.a
+mv core/librealm-ios-bitcode.a core/librealm-ios.a
 
-    ######################################
-    # Versioning
-    ######################################
-    "get-version")
-        version_file="Realm/Realm-Info.plist"
-        echo "$(PlistBuddy -c "Print :CFBundleVersion" "$version_file")"
-        exit 0
-        ;;
-
-    ######################################
-    # CocoaPods
-    ######################################
-    "cocoapods-setup")
-        download_core
-        mv core/librealm.a core/librealm-osx.a
-        mv core/librealm-ios-bitcode.a core/librealm-ios.a
-
-        # CocoaPods doesn't support multiple header_mappings_dir, so combine
-        # both sets of headers into a single directory
-        rm -rf include
-        cp -R core/include include
-        mkdir -p include/Realm
-        cp Realm/*.{h,hpp} include/Realm
-        cp Realm/ObjectStore/*.hpp include/Realm
-        cp Realm/ObjectStore/impl/*.hpp include/Realm
-        cp Realm/ObjectStore/impl/apple/*.hpp include/Realm
-        touch include/Realm/RLMPlatform.h
-        ;;
-esac
+# CocoaPods doesn't support multiple header_mappings_dir, so combine
+# both sets of headers into a single directory
+rm -rf include
+cp -R core/include include
+mkdir -p include/Realm
+cp Realm/*.{h,hpp} include/Realm
+cp Realm/ObjectStore/*.hpp include/Realm
+cp Realm/ObjectStore/impl/*.hpp include/Realm
+cp Realm/ObjectStore/impl/apple/*.hpp include/Realm
+touch include/Realm/RLMPlatform.h
