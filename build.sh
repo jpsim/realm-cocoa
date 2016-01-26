@@ -52,21 +52,12 @@ case "$1" in
         # CocoaPods doesn't support multiple header_mappings_dir, so combine
         # both sets of headers into a single directory
         rm -rf include
-        # Create uppercase `Realm` header directory for a case-sensitive filesystem.
-        # Both `Realm` and `realm` directories are required.
-        if [ ! -e core/include/Realm ]; then
-            cp -R core/include/realm core/include/Realm
-        fi
         cp -R core/include include
         mkdir -p include/Realm
         cp Realm/*.{h,hpp} include/Realm
         cp Realm/ObjectStore/*.hpp include/Realm
         cp Realm/ObjectStore/impl/*.hpp include/Realm
         cp Realm/ObjectStore/impl/apple/*.hpp include/Realm
-        # Create lowercase `realm` header directory for a case-sensitive filesystem.
-        if [ ! -e include/realm ]; then
-            cp -R include/Realm include/realm
-        fi
         touch include/Realm/RLMPlatform.h
         ;;
 esac
